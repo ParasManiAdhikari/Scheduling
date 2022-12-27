@@ -68,4 +68,9 @@
       <Filter>Ressourcendateien</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme.md">
+      <Filter>Ressourcendateien</Filter>
+    </None>
+  </ItemGroup>
 </Project>
