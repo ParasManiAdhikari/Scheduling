@@ -61,6 +61,7 @@ typedef struct
 typedef struct readyListElement_struct
 {
 	pid_t	pid;
+	struct readyListElement_struct* next;
 } readyListElement_t;
 /* +++ this needs to be changed for support of multiprogramming			*/
 /* +++ for batch-OS this is only the single running process				*/
@@ -75,6 +76,7 @@ typedef struct blockedListElement_struct
 {
 	pid_t		pid;
 	unsigned	IOready;
+	struct blockedListElement_struct* next;
 } blockedListElement_t;
 /* +++ this needs to be changed for support of multiprogramming			*/
 /* +++ for batch-OS this is only the single running process				*/

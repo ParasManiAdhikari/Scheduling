@@ -100,33 +100,35 @@ Boolean initBlockedList(void)
 }
 
 Boolean addBlocked(pid_t pid, unsigned blockDuration)
-/* CAUTION: For simulation purposes the blocked list must comply with:			*/
-/*		- each entry has the information of the release time (IOready)			*/
-/*		  included for each process	(handled by the simulation)					*/
-/*        calculated as the systemTime + blockDuration						*/
-/*		- The blocked list is sorted by not decreasing release times (IOready)	*/
-/*			(i.e. first process to become unblocked is always head of the list	*/
-
-/* xxxx This function is a stub with reduced functionality, it must be xxxx */
-/* xxxx extended to enable full functionality of the operating system  xxxx */
-/* xxxx A global variable is used to store blocked process in batch    xxxx */
-/* xxxx processing. A blocked list needs to be implemented 		       xxxx */
-/* retuns FALSE on error and TRUE on success								*/
+// if list not empty then add the element to next of head and make that element the tail
 {
 	processTable[pid].status = blocked;			// change process state to "blocked"
-	blockedOne.IOready = systemTime + blockDuration; // this must be supported by an extended implementation!
-	blockedOne.pid = pid;
-	blockedList = &blockedOne;			// remember the blocked process
+	if (blockedList != NULL) {
+
+		//find the last added process
+		blockedList_t lastAdded = blockedList;
+		while (lastAdded->next != NULL) {
+			lastAdded = lastAdded->next;
+		}
+
+		//create a block which keeps this process
+		blockedList_t newBlocked = malloc(sizeof(blockedList_t));
+		newBlocked->pid = pid;
+		newBlocked->IOready = systemTime + blockDuration;
+		newBlocked->next = NULL;
+
+		// add this block at the end of the blocked list
+		lastAdded->next = newBlocked;
+	}
+	else {
+		blockedOne.IOready = systemTime + blockDuration; // this must be supported by an extended implementation!
+		blockedOne.pid = pid;
+		blockedList = &blockedOne;			// remember the blocked process
+	}
 	return TRUE;
 }
 
 Boolean removeBlocked(pid_t pid)
-/* Removes the given PID from the blocked-list								*/		
-/* retuns FALSE on error and TRUE on success								*/
-/* xxxx This function is a stub with reduced functionality, it must be xxxx */
-/* xxxx extended to enable full functionality of the operating system  xxxx */
-/* xxxx A global variable is used to store blocked process in batch    xxxx */
-/* xxxx processing. A blocked list needs to be implemented 		       xxxx */
 {
 	blockedOne.IOready = 0;
 	blockedOne.pid = NO_PROCESS;	// forget the blocked process
