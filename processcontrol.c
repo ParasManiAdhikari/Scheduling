@@ -100,25 +100,25 @@ Boolean initBlockedList(void)
 }
 
 Boolean addBlocked(pid_t pid, unsigned blockDuration)
-// if list not empty then add the element to next of head and make that element the tail
+// if list not empty, find the tail and add next to it
 {
 	processTable[pid].status = blocked;			// change process state to "blocked"
 	if (blockedList != NULL) {
 
-		//find the last added process
-		blockedList_t lastAdded = blockedList;
-		while (lastAdded->next != NULL) {
-			lastAdded = lastAdded->next;
+		//find the last added process (tail)
+		blockedList_t tail = blockedList;
+		while (tail->next != NULL) {
+			tail = tail->next;
 		}
 
-		//create a block which keeps this process
+		//create a block which holds this process
 		blockedList_t newBlocked = malloc(sizeof(blockedList_t));
 		newBlocked->pid = pid;
 		newBlocked->IOready = systemTime + blockDuration;
 		newBlocked->next = NULL;
 
 		// add this block at the end of the blocked list
-		lastAdded->next = newBlocked;
+		tail->next = newBlocked;
 	}
 	else {
 		blockedOne.IOready = systemTime + blockDuration; // this must be supported by an extended implementation!

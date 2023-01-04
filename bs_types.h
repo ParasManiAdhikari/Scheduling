@@ -46,7 +46,8 @@ typedef struct
 	{
 		Boolean valid; 		
 		pid_t pid; 
-		pid_t ppid; 
+		pid_t ppid;
+		unsigned priority;
 		unsigned ownerID;
 		unsigned start; 
 		unsigned duration; 
@@ -54,7 +55,7 @@ typedef struct
 		ProcessType_t type; 
 		Status_t status;
 		sim_info_t simInfo;
-	} PCB_t; 
+} PCB_t; 
 
 
 /* data type for the list of processes in ready state				*/
