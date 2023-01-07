@@ -153,18 +153,13 @@ Boolean removeBlocked(pid_t pid)
 		count++;
 	}
 
-	// 1 2 3 5 7
-	printf("Deleting process no-%d ..\n", toDelete->pid);
-
 	 //if its tail
 	if (toDelete->next == NULL && count > 1) {
-		printf("!# PROCESS IS TAIL\n");
 		printList(blockedList);
 		toDelete->prev->next = NULL;
 	}
 	// if its head
 	else if (count == 0) {
-		printf("!# PROCESS IS HEAD\n");
 		blockedList = toDelete->next;
 	}
 	//between head and tail processses
@@ -255,8 +250,6 @@ Boolean removeReady(pid_t pid)
 		toDelete = toDelete->next;
 		count++;
 	}
-
-	// 1 2 3 5 7
 
 	//if its tail
 	if (toDelete->next == NULL) {
