@@ -9,13 +9,6 @@
 /* ----------------------------------------------------------------	*/
 /* Declare global variables according to definition in globals.h	*/
 unsigned systemTime = 0; 	// the current system time (up time)
-const char* printBoolean(Boolean b) {
-	char* truefalse = "FALSE";
-	if (b == TRUE) {
-		truefalse = "TRUE";
-	}
-	return truefalse;
-}
 
 void printList(blockedList_t list) {
 	blockedList_t process = list;
