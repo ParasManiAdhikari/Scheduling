@@ -31,6 +31,17 @@ readyListElement_t readyOne;	// the only process ready in the batch system
 /* Functions for administration of processes in general 			*/
 /* ---------------------------------------------------------------- */
 
+void printList(blockedList_t list) {
+	blockedList_t process = list;
+	printf("-----------\n");
+	while (process->next != NULL) {
+		printf("process id: %d\n", process->pid);
+		process = process->next;
+	}
+	printf("process id: %d\n", process->pid);
+	printf("------------\n");
+}
+
 pid_t getNextPid()
 /* Typically the PID is the index into the process table, thus the pool  	*/
 /* for PIDs is limited by the size of the process table. If the end of the	*/
@@ -146,8 +157,9 @@ Boolean removeBlocked(pid_t pid)
 	printf("Deleting process no-%d ..\n", toDelete->pid);
 
 	 //if its tail
-	if (toDelete->next == NULL) {
+	if (toDelete->next == NULL && count > 1) {
 		printf("!# PROCESS IS TAIL\n");
+		printList(blockedList);
 		toDelete->prev->next = NULL;
 	}
 	// if its head
@@ -245,16 +257,13 @@ Boolean removeReady(pid_t pid)
 	}
 
 	// 1 2 3 5 7
-	printf("Deleting process no-%d ..\n", toDelete->pid);
 
 	//if its tail
 	if (toDelete->next == NULL) {
-		printf("!# PROCESS IS TAIL\n");
 		toDelete->prev->next = NULL;
 	}
 	// if its head
 	else if (count == 0) {
-		printf("!# PROCESS IS HEAD\n");
 		readyList = toDelete->next;
 	}
 	//between head and tail processses
