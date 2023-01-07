@@ -104,7 +104,8 @@ Boolean addBlocked(pid_t pid, unsigned blockDuration)
 {
 	processTable[pid].status = blocked;			// change process state to "blocked"
 	if (blockedList != NULL) {
-
+		// 1 +2
+		// 
 		//find the last added process (tail)
 		blockedList_t tail = blockedList;
 		while (tail->next != NULL) {
@@ -119,6 +120,7 @@ Boolean addBlocked(pid_t pid, unsigned blockDuration)
 
 		// add this block at the end of the blocked list
 		tail->next = newBlocked;
+		newBlocked->prev = tail;
 	}
 	else {
 		blockedOne.IOready = systemTime + blockDuration; // this must be supported by an extended implementation!
@@ -130,9 +132,35 @@ Boolean addBlocked(pid_t pid, unsigned blockDuration)
 
 Boolean removeBlocked(pid_t pid)
 {
-	blockedOne.IOready = 0;
-	blockedOne.pid = NO_PROCESS;	// forget the blocked process
-	blockedList = NULL;				// now there is no blocked process
+	int count = 0;
+	readyList_t toDelete = blockedList;
+	while (toDelete->next != NULL) {
+		if (toDelete->pid == pid) {
+			break;
+		}
+		toDelete = toDelete->next;
+		count++;
+	}
+
+	// 1 2 3 5 7
+	printf("Deleting process no-%d ..\n", toDelete->pid);
+
+	 //if its tail
+	if (toDelete->next == NULL) {
+		printf("!# PROCESS IS TAIL\n");
+		toDelete->prev->next = NULL;
+	}
+	// if its head
+	else if (count == 0) {
+		printf("!# PROCESS IS HEAD\n");
+		blockedList = toDelete->next;
+	}
+	//between head and tail processses
+	else {
+		toDelete->prev->next = toDelete->next;
+		toDelete->next->prev = toDelete->prev;
+		toDelete = NULL;
+	}
 	return TRUE;
 }
 

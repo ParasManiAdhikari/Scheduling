@@ -24,30 +24,31 @@ void printBlockedList(blockedList_t list) {
 		printf("process id: %d\n", process->pid);
 		process = process->next;
 	}
-	printf("last process id: %d\n", process->pid);
+	printf("process id: %d\n", process->pid);
 	printf("------------\n");
 }
 
 void testBlockAdd() {
-	printf("Adding first process\n");
 	addBlocked(1, 5);
-	printBlockedList(blockedList);
-	printf("Adding more processes\n");
 	addBlocked(2, 10);
 	addBlocked(3, 10);
 	addBlocked(5, 10);
+	addBlocked(7, 10);
+	printf("Processes: \n");
+	printBlockedList(blockedList);
+	removeBlocked(7);
 	printBlockedList(blockedList);
 }
 
 int main(int argc, char *argv[])
 {	// starting point, all processing is done in called functions
-	sim_initSim();		// initialise simulation run-time environment
-	initOS();		// initialise operating system
-	logGeneric("Starting stimulus-based simulation");
-	coreLoop();		// start scheduling loop
-	logGeneric("Simulation complete, shutting down");
-	sim_closeSim();		// shut down simulation envoronment
-	fflush(stdout);			// make sure the output on the console is complete 
-	//testBlockAdd();
+	//sim_initSim();		// initialise simulation run-time environment
+	//initOS();		// initialise operating system
+	//logGeneric("Starting stimulus-based simulation");
+	//coreLoop();		// start scheduling loop
+	//logGeneric("Simulation complete, shutting down");
+	//sim_closeSim();		// shut down simulation envoronment
+	//fflush(stdout);			// make sure the output on the console is complete 
+	testBlockAdd();
 	return 1; 
 }
