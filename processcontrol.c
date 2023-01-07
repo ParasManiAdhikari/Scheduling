@@ -113,14 +113,14 @@ Boolean addBlocked(pid_t pid, unsigned blockDuration)
 		}
 
 		//create a block which holds this process
-		blockedList_t newBlocked = malloc(sizeof(blockedList_t));
-		newBlocked->pid = pid;
-		newBlocked->IOready = systemTime + blockDuration;
-		newBlocked->next = NULL;
+		blockedList_t newBlock = malloc(sizeof(blockedList_t));
+		newBlock->pid = pid;
+		newBlock->IOready = systemTime + blockDuration;
+		newBlock->next = NULL;
 
-		// add this block at the end of the blocked list
-		tail->next = newBlocked;
-		newBlocked->prev = tail;
+		// link tail and newBlock
+		tail->next = newBlock;
+		newBlock->prev = tail;
 	}
 	else {
 		blockedOne.IOready = systemTime + blockDuration; // this must be supported by an extended implementation!
@@ -133,7 +133,7 @@ Boolean addBlocked(pid_t pid, unsigned blockDuration)
 Boolean removeBlocked(pid_t pid)
 {
 	int count = 0;
-	readyList_t toDelete = blockedList;
+	blockedList_t toDelete = blockedList;
 	while (toDelete->next != NULL) {
 		if (toDelete->pid == pid) {
 			break;
@@ -205,33 +205,64 @@ Boolean initReadyList(void)
 }
 
 Boolean addReady(pid_t pid)	// add this process to the ready list
-/* retuns FALSE on error and TRUE on success								*/
-/* CAUTION: For simulation purposes the ready list must comply with:*/
-/*		- interface as given in the .h-file							*/
-/*		- no process is added as "ready" before its start time has elapsed	*/
-/* xxxx This function is a stub with reduced functionality, it must be xxxx */
-/* xxxx extended to enable full functionality of the operating system  xxxx */
-/* xxxx A global variable is used to store the only ready process in   xxxx */
-/* xxxx batch processing. A blocked list needs to be implemented 	   xxxx */
 {
 	processTable[pid].status = ready;			// change process state to "ready"
-	readyOne.pid = pid; 
-	readyList = &readyOne;
+	if (readyList != NULL) {
+		// 1 +2
+		// 
+		//find the last added process (tail)
+		readyList_t tail = readyList;
+		while (tail->next != NULL) {
+			tail = tail->next;
+		}
+
+		//create a block which holds this process
+		readyList_t newBlock = malloc(sizeof(readyList_t));
+		newBlock->pid = pid;
+		newBlock->next = NULL;
+
+		// link tail and newBlock
+		tail->next = newBlock;
+		newBlock->prev = tail;
+	}
+	else {
+		readyOne.pid = pid; 
+		readyList = &readyOne;
+	}
 	return TRUE;
 }
 
 Boolean removeReady(pid_t pid)
-/* retuns FALSE on error and TRUE on success								*/
-/* CAUTION: For simulation purposes the ready list must comply with:*/
-/*		- interface as given in the .h-file							*/
-/*		- no process is added as "ready" before its start time has elapsed	*/
-/* xxxx This function is a stub with reduced functionality, it must be xxxx */
-/* xxxx extended to enable full functionality of the operating system  xxxx */
-/* xxxx A global variable is used to store ready process in batch    xxxx */
-/* xxxx processing. A ready list needs to be implemented 		       xxxx */
 {
-	readyOne.pid = NO_PROCESS;		// forget the ready process
-	readyList = NULL;				// now there is no ready process
+	int count = 0;
+	readyList_t toDelete = readyList;
+	while (toDelete->next != NULL) {
+		if (toDelete->pid == pid) {
+			break;
+		}
+		toDelete = toDelete->next;
+		count++;
+	}
+
+	// 1 2 3 5 7
+	printf("Deleting process no-%d ..\n", toDelete->pid);
+
+	//if its tail
+	if (toDelete->next == NULL) {
+		printf("!# PROCESS IS TAIL\n");
+		toDelete->prev->next = NULL;
+	}
+	// if its head
+	else if (count == 0) {
+		printf("!# PROCESS IS HEAD\n");
+		readyList = toDelete->next;
+	}
+	//between head and tail processses
+	else {
+		toDelete->prev->next = toDelete->next;
+		toDelete->next->prev = toDelete->prev;
+		toDelete = NULL;
+	}
 	return TRUE;
 }
 

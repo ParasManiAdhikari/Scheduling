@@ -17,7 +17,7 @@ const char* printBoolean(Boolean b) {
 	return truefalse;
 }
 
-void printBlockedList(blockedList_t list) {
+void printList(blockedList_t list) {
 	blockedList_t process = list;
 	printf("-----------\n");
 	while (process->next != NULL) {
@@ -28,16 +28,27 @@ void printBlockedList(blockedList_t list) {
 	printf("------------\n");
 }
 
-void testBlockAdd() {
+void testBlockAddRemove() {
 	addBlocked(1, 5);
 	addBlocked(2, 10);
 	addBlocked(3, 10);
 	addBlocked(5, 10);
 	addBlocked(7, 10);
-	printf("Processes: \n");
-	printBlockedList(blockedList);
+	printf("Block List: \n");
+	printList(blockedList);
 	removeBlocked(7);
-	printBlockedList(blockedList);
+	printList(blockedList);
+}
+
+void testReadyAddRemove() {
+	printf("ReadyList: ");
+	addReady(2);
+	addReady(13);
+	addReady(5);
+	addReady(7);
+	printList(readyList);
+	removeReady(13);
+	printList(readyList);
 }
 
 int main(int argc, char *argv[])
@@ -49,6 +60,7 @@ int main(int argc, char *argv[])
 	//logGeneric("Simulation complete, shutting down");
 	//sim_closeSim();		// shut down simulation envoronment
 	//fflush(stdout);			// make sure the output on the console is complete 
-	testBlockAdd();
+	//testBlockAddRemove();
+	testReadyAddRemove();
 	return 1; 
 }
