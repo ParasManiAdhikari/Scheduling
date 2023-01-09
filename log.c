@@ -62,7 +62,7 @@ void addBlockedMessage(unsigned pid, schedulingEvent_t reason)
 
 void removeBlockedMessage(unsigned pid)
 {
-	printf("%6u : PID %3u : Removed from blocked list\n", pid, systemTime);
+	printf("%6u : PID %3u : Removed from blocked list\n", systemTime, pid);
 }
 
 /* ----------------------------------------------------------------- */
