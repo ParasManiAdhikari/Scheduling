@@ -43,7 +43,7 @@ void printList(blockedList_t list) {
 	blockedList_t process = list;
 	if (process == NULL) {
 		logGeneric("EMPTY ---");
-		return 0;
+		return;
 	}
 	printf("         -----------\n");
 	while (process->next != NULL) {
@@ -80,13 +80,13 @@ void coreLoop(void)
 				processTable[currentProcess].duration, "of the Process completed");
 			// handle all processes that turned "ready" in the meantime (unblocked or started (in case of multiprogramming) )
 			releaseEvent = sim_check4UnblockedOrNew(&readyProcess);
-			//logPidEvent(readyProcess, releaseEvent, "Release Event ****************");
 			while (releaseEvent != none)
 			{
 				/* Without multiprogramming this loop shall never be entered, but: */
 				/* This must be extended for multiprogramming. */
 				/* Add Code for handling of started or unblocked processes here.
 				/* For RR it is simply enqueing to the readylist, other schedulers may require more actions */
+				logPidEvent(readyProcess, releaseEvent, "");
 				addReady(readyProcess);
 				addReadyMessage(readyProcess);
 				if (releaseEvent == unblocked) {

@@ -56,5 +56,6 @@ int main(int argc, char *argv[])
 	fflush(stdout);			// make sure the output on the console is complete 
 	/*testBlockAddRemove();
 	testReadyAddRemove();*/
+	system("pause");
 	return 1; 
 }

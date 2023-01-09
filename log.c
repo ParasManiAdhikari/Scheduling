@@ -47,17 +47,17 @@ void logPidCompleteness(unsigned pid, unsigned done, unsigned length,
 
 void addReadyMessage(unsigned pid)
 {
-	printf("%6u : PID %3u: Added to the ready list\n", systemTime, pid);
+	printf("%6u : PID %3u : Added to the ready list\n", systemTime, pid);
 }
 
 void RemoveReadyMessage(unsigned pid)
 {
-	printf("%6u : PID %3u: Removed from the ready list\n", systemTime, pid);
+	printf("%6u : PID %3u : Removed from the ready list\n", systemTime, pid);
 }
 
 void addBlockedMessage(unsigned pid, schedulingEvent_t reason)
 {
-	printf("%6u : PID %3u: Added to the blocked list : Event: %s\n", systemTime, pid, eventString[reason]);
+	printf("%6u : PID %3u : Added to the blocked list : Event: %s\n", systemTime, pid, eventString[reason]);
 }
 
 void removeBlockedMessage(unsigned pid)
