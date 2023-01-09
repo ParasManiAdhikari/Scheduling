@@ -39,17 +39,19 @@ void initOS(void)
 }
 
 void printList(blockedList_t list) {
+	logGeneric("READYLIST");
 	blockedList_t process = list;
 	if (process == NULL) {
+		logGeneric("EMPTY ---");
 		return 0;
 	}
-	printf("-----------\n");
+	printf("         -----------\n");
 	while (process->next != NULL) {
-		printf("process id: %d\n", process->pid);
+		printf("       : Process : %d\n", process->pid);
 		process = process->next;
 	}
-	printf("process id: %d\n", process->pid);
-	printf("------------\n");
+	printf("       : Process : %d\n", process->pid);
+	printf("         -----------\n");
 }
 
 
@@ -64,13 +66,8 @@ void coreLoop(void)
 
 	do {// loop until stimulus is complete
 		// select and run a process
-		logGeneric("ONE ****************");
 		printList(readyList);
-		
 		currentProcess = schedule(readyList);
-		logPid(currentProcess, "PROCESS IS TAKEN OUT OF READYLIST TO RUN");
-		logGeneric("TWO ****************");
-		printList(readyList);
 		if (currentProcess != NO_PROCESS)		// schedulable process exists, given by its PID
 		{
 			systemTime = systemTime + SCHEDULING_DURATION;
@@ -83,16 +80,14 @@ void coreLoop(void)
 				processTable[currentProcess].duration, "of the Process completed");
 			// handle all processes that turned "ready" in the meantime (unblocked or started (in case of multiprogramming) )
 			releaseEvent = sim_check4UnblockedOrNew(&readyProcess);
-			logPidEvent(readyProcess, releaseEvent, "Release Event ****************");
+			//logPidEvent(readyProcess, releaseEvent, "Release Event ****************");
 			while (releaseEvent != none)
 			{
 				/* Without multiprogramming this loop shall never be entered, but: */
 				/* This must be extended for multiprogramming. */
 				/* Add Code for handling of started or unblocked processes here.
 				/* For RR it is simply enqueing to the readylist, other schedulers may require more actions */
-
-
-				addReady(readyProcess);		// add this process to the ready list
+				addReady(readyProcess);
 				logPidAddReady(readyProcess);
 				if (releaseEvent == unblocked) {
 					removeBlocked(readyProcess);

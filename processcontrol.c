@@ -172,7 +172,7 @@ blockedListElement_t *headOfBlockedList()
 /* MUST be implemented for simulation purposes								*/			
 {
 	if (!isBlockedListEmpty()) {
-		return &blockedOne;	// return pointer to the only blocked element remembered
+		return blockedList;	// return pointer to the only blocked element remembered
 	} 
 	else return NULL;		// empty blocked list has no first element
 }
@@ -273,7 +273,7 @@ readyListElement_t* headOfReadyList()
 /*		- no process is added as "ready" before its start time has elapsed	*/
 {
 	if (!isReadyListEmpty()) {
-		return &readyOne;	// return pointer to the only ready element remembered
+		return readyList;	// return pointer to the only ready element remembered
 	}
 	else return NULL;		// empty ready list has no first element
 }

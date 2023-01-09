@@ -23,7 +23,6 @@ pid_t schedule(readyList_t readyListParam) {
 	pid_t nextToRun;
 	if (readyListParam == NULL) return NO_PROCESS;
 	nextToRun = readyListParam->pid;
-	logPid(nextToRun, "NEXT TO RUN");
 	removeReady(nextToRun);
 	return nextToRun;
 }
