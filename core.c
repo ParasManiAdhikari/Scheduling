@@ -88,11 +88,12 @@ void coreLoop(void)
 				/* Add Code for handling of started or unblocked processes here.
 				/* For RR it is simply enqueing to the readylist, other schedulers may require more actions */
 				addReady(readyProcess);
-				logPidAddReady(readyProcess);
+				addReadyMessage(readyProcess);
 				if (releaseEvent == unblocked) {
 					removeBlocked(readyProcess);
-					logPidRemoveBlocked(readyProcess);
+					removeBlockedMessage(readyProcess);
 				}
+
 				/* Last command in the while loop is the following (must alway remain the last command in the loop) */
 				releaseEvent = sim_check4UnblockedOrNew(&readyProcess);	// check for further events, must stay in!
 			}
@@ -106,14 +107,14 @@ void coreLoop(void)
 				currentProcess = NO_PROCESS;
 				break;
 			case io:	// block process for time of IO
-				logPidAddBlocked(currentProcess, schedulingEvent);
+				addBlockedMessage(currentProcess, schedulingEvent);
 				addBlocked(currentProcess, sim_setIOBlockTime());
 				break;
 			case quantumOver: // only logging needed
 				logPidCompleteness(currentProcess, processTable[currentProcess].usedCPU,
 					processTable[currentProcess].duration, "of the Process completed");
 				processTable[currentProcess].status = ready;	// update status
-				logPidAddReady(currentProcess);
+				addReadyMessage(currentProcess);
 				// add this process to the ready list
 				addReady(currentProcess);
 				break;
@@ -138,17 +139,17 @@ void coreLoop(void)
 				stimulusCompleted = TRUE;
 				break;
 			case unblocked:
-				logPidRemoveBlocked(readyProcess);
+				removeBlockedMessage(readyProcess);
 				removeBlocked(readyProcess); // remove from blocked pool
 				processTable[readyProcess].status = ready;   // change status from "blocked" to "ready"
-				logPidAddReady(readyProcess);
+				addReadyMessage(readyProcess);
 				addReady(readyProcess);		// add this process to the ready list
 				logPid(readyProcess, "IO completed, process unblocked and switched to ready state");
 
 				break;
 			case started:
 				processTable[readyProcess].status = ready;   // change status from "init" to "ready"
-				logPidAddReady(readyProcess);
+				addReadyMessage(readyProcess);
 				addReady(readyProcess);		// add this process to the ready list
 				logPid(readyProcess, "New process initialised and now ready");
 				break;

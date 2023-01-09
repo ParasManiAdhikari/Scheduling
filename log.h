@@ -34,5 +34,16 @@ void logPidCompleteness(unsigned pid, unsigned done, unsigned length,
 /* the fraction of used CPU over process duratiuon is also prepended		*/
 /* the linefeed is automatically appended									*/
 
+void addReadyMessage(unsigned pid);
+//logs the pid that has been added to the readyList with its systemTime
+
+void RemoveReadyMessage(unsigned pid);
+//logs the pid that has been removed from the readyList with its systemTime
+
+void addBlockedMessage(unsigned pid, schedulingEvent_t reason);
+//logs the pid that has been added to the blockedList with its systemTime and Event log
+
+void removeBlockedMessage(unsigned pid);
+//log the pid that has been removed from the blockedList with its systemTIme
 
 #endif /* __LOG__ */
