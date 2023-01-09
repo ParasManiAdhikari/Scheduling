@@ -24,7 +24,7 @@ Boolean candidateAvailable = FALSE;		// Flag indicating that a process is availa
 /* ---------------------------------------------------------------- */
 /*                Declarations of local helper functions			*/
 
-FILE* openStimulusFile(FILE *file, const char * filename);
+FILE* openStimulusFile(FILE* file, const char* filename);
 /* opens the  process info file specified by <filename>						*/
 /* file has to refer to a valid FILE handle in the calling instance			*/
 /* returns the file handle (which is NULL on error)							*/
@@ -63,7 +63,7 @@ int sim_initSim(void)
 	systemTime = 0;				// reset the system time to zero
 	// open the file with process definitions
 	processFile = openStimulusFile(processFile, filename);
-	if (processFile == NULL) exit(-1); 
+	if (processFile == NULL) exit(-1);
 	logGeneric("Simulation: Process info file opened");
 	stimulusComplete = FALSE;
 	// read first entry to generate event-information for simulation
@@ -78,14 +78,14 @@ int sim_initSim(void)
 int sim_closeSim(void)
 /* Exit from the simulation environment regularly					*/
 {
-	return TRUE; 
+	return TRUE;
 }
 
 
 Boolean sim_noMoreProcesses(void)
 /* returns TRUE when simulation has no more processes to run		*/
 /* i.e. when the stimulus-file was complete read and the buffered   */
-/* candidate process was used						 				*/			
+/* candidate process was used						 				*/
 {
 	return !candidateAvailable;
 }
@@ -93,12 +93,12 @@ Boolean sim_noMoreProcesses(void)
 Boolean sim_getProcessParameters(pid_t pid)
 /* initialises the process handed over in pProcess with the			*/
 /* parameters read from stimulus file. Only parameters given by the */
-/* stimulis file are changed										*/		
+/* stimulis file are changed										*/
 /* retuns FALSE on error and TRUE on success						*/
 {
 	char processTypeStr[16] = ""; 	// plain text of process type 
-	
-//	if (sim_noMoreProcesses()) return FALSE; 
+
+	//	if (sim_noMoreProcesses()) return FALSE; 
 	if (candidateAvailable)	// there ist still at least one process to run
 	{
 		// use the candidate as new process
@@ -107,29 +107,29 @@ Boolean sim_getProcessParameters(pid_t pid)
 		processTable[pid].duration = processCandidate.duration;
 		processTable[pid].type = processCandidate.type;
 		switch (processTable[pid].type) {
-			case os:			strcpy(processTypeStr, "os"); break; 
-			case interactive:	strcpy(processTypeStr, "interactive"); break;
-			case batch:			strcpy(processTypeStr, "batch"); break;
-			case background:	strcpy(processTypeStr, "background"); break;
-			case foreground:	strcpy(processTypeStr, "foreground"); break;
+		case os:			strcpy(processTypeStr, "os"); break;
+		case interactive:	strcpy(processTypeStr, "interactive"); break;
+		case batch:			strcpy(processTypeStr, "batch"); break;
+		case background:	strcpy(processTypeStr, "background"); break;
+		case foreground:	strcpy(processTypeStr, "foreground"); break;
 		}
-		printf("%6u : Simulation: Process %u configured as: %u %u %u %s\n", systemTime, 
+		printf("%6u : Simulation: Process %u configured as: %u %u %u %s\n", systemTime,
 			pid, processTable[pid].ownerID,
 			processTable[pid].start, processTable[pid].duration, processTypeStr);
 		// read next entry from stimulus, make it the next candidate
 		candidateAvailable = readNextProcess(processFile, &processCandidate);
-		return TRUE; 
+		return TRUE;
 	}
 	else
 		return FALSE; // there is no process information available
 }
 
 unsigned int sim_setIOBlockTime(void)
-/* returns the duration of a simulated IO-operation					*/ 
+/* returns the duration of a simulated IO-operation					*/
 {
 	// determine the time the process will be blocked for IO
 	// using uniform probability distribution 
-	return  rand() % (2 * IO_MEAN_DURATION)+1; // for simulation only, must stay in!
+	return  rand() % (2 * IO_MEAN_DURATION) + 1; // for simulation only, must stay in!
 }
 
 schedulingEvent_t sim_check4UnblockedOrNew(pid_t* pPID)
@@ -144,7 +144,7 @@ schedulingEvent_t sim_check4UnblockedOrNew(pid_t* pPID)
 /* process that became ready. The value is changed to 0 if no event */
 /* occurred and to the pid of the process causing the event			*/
 /* otherwise.														*/
-/* No data structures of the OS are changed, the OS must deal with	*/ 
+/* No data structures of the OS are changed, the OS must deal with	*/
 /* the returned informnation appropriately, e.g. update blocked-    */
 /* and ready-list													*/
 /* USAGE:															*/
@@ -153,24 +153,24 @@ schedulingEvent_t sim_check4UnblockedOrNew(pid_t* pPID)
 // This code is only valid for the simulation of systems supporting multiprogramming.
 // If activated for batch systems the simulation will fail.
 {
-	pid_t newPID= NO_PROCESS, unblockedPID=NO_PROCESS; 
-	unsigned unblockedTime, startTime  = INT_MAX;// timestamps of found events
-	schedulingEvent_t releaseEvent = none; 
+	pid_t newPID = NO_PROCESS, unblockedPID = NO_PROCESS;
+	unsigned unblockedTime, startTime = INT_MAX;// timestamps of found events
+	schedulingEvent_t releaseEvent = none;
 #ifdef SIM_MULTIPROGAMMING
 
-	*pPID = NO_PROCESS;				// by default no process is returned
+	* pPID = NO_PROCESS;				// by default no process is returned
 	if (!isBlockedListEmpty())		// there are blocked processes
 	{
-		unblockedTime = headOfBlockedList()->IOready; 
+		unblockedTime = headOfBlockedList()->IOready;
 		if (unblockedTime <= systemTime)
 		{
 			releaseEvent = unblocked;
-			unblockedPID = headOfBlockedList()->pid; 
+			unblockedPID = headOfBlockedList()->pid;
 		}
 	}
 	if (!sim_noMoreProcesses())
 	{	// check when the next process becomes startable
-		if (((releaseEvent==unblocked) && sim_newProcessEvent(unblockedTime)) 
+		if (((releaseEvent == unblocked) && sim_newProcessEvent(unblockedTime))
 			|| ((releaseEvent == none) && sim_newProcessEvent(systemTime)))
 		{	// Either the next new process is available before the found blocked process is unblocked
 			// or there is no unblocked process and the new process is now available 
@@ -234,17 +234,17 @@ schedulingEvent_t sim_wait4UnblockedOrNew(pid_t* pPID)
 	// In pure batch check for new processes is only allowed if no blocked process exists (thus the "else")
 	else
 #endif
-	// check if there are further processes listed in the simulation-stimulus
-	if (!sim_noMoreProcesses())
-	{	// check when the next process becomes startable
-		if (((releaseEvent == unblocked) && sim_newProcessEvent(unblockedTime))
-			|| (releaseEvent == none) )
-		{	// Either the next new process is available before the found blocked process is unblocked
-			// or there is no unblocked process and there is still a new process available 
-			releaseEvent = started;	// this happens first, so the event is the starting of a process
-			newPID = sim_makeNewProcessReady();	// advance system time and initialise the new process
+		// check if there are further processes listed in the simulation-stimulus
+		if (!sim_noMoreProcesses())
+		{	// check when the next process becomes startable
+			if (((releaseEvent == unblocked) && sim_newProcessEvent(unblockedTime))
+				|| (releaseEvent == none))
+			{	// Either the next new process is available before the found blocked process is unblocked
+				// or there is no unblocked process and there is still a new process available 
+				releaseEvent = started;	// this happens first, so the event is the starting of a process
+				newPID = sim_makeNewProcessReady();	// advance system time and initialise the new process
+			}
 		}
-	}
 	// Now either a process for unblocking is found, a new one has been initialised or no more processes exist
 	switch (releaseEvent)
 	{
@@ -285,7 +285,7 @@ Boolean sim_newProcessEvent(unsigned timestamp)
 }
 
 pid_t sim_makeNewProcessReady(void)
-/* Initialises the next procees given bay the stimulus file.		*/	
+/* Initialises the next procees given bay the stimulus file.		*/
 /* If the process is not yet ready to be startet, the system time	*/
 /* is advanced until the process becomes startable					*/
 {
@@ -319,12 +319,12 @@ pid_t sim_makeNewProcessReady(void)
 	return pid;
 }
 
-FILE* openStimulusFile(FILE *file, const char * filename)
+FILE* openStimulusFile(FILE* file, const char* filename)
 {
 
 	char linebuffer[129] = "x"; // read buffer for file-input
 
-								// try to open file for read
+	// try to open file for read
 	file = fopen(filename, "r");
 	// test for success and error handling
 	if (file == NULL)
@@ -336,7 +336,7 @@ FILE* openStimulusFile(FILE *file, const char * filename)
 	if (!feof(file))
 		fgets(linebuffer, 128, file);
 	printf("Read from File: %s", linebuffer);
-	candidateAvailable = TRUE; 
+	candidateAvailable = TRUE;
 	return file;
 }
 
@@ -374,7 +374,7 @@ Boolean readNextProcess(FILE* f, PCB_t* pProcess)
 				else pProcess->type = os;
 			}
 		}
-		pProcess->valid = TRUE; 
+		pProcess->valid = TRUE;
 	}
 	return TRUE;
 }

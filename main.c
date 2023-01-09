@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	logGeneric("Simulation complete, shutting down");
 	sim_closeSim();		// shut down simulation envoronment
 	fflush(stdout);			// make sure the output on the console is complete 
-	//testBlockAddRemove();
-	//testReadyAddRemove();
+	/*testBlockAddRemove();
+	testReadyAddRemove();*/
 	return 1; 
 }

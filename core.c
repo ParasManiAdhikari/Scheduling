@@ -38,6 +38,21 @@ void initOS(void)
 	initBlockedList();	// no blocked processes exist
 }
 
+void printList(blockedList_t list) {
+	blockedList_t process = list;
+	if (process == NULL) {
+		return 0;
+	}
+	printf("-----------\n");
+	while (process->next != NULL) {
+		printf("process id: %d\n", process->pid);
+		process = process->next;
+	}
+	printf("process id: %d\n", process->pid);
+	printf("------------\n");
+}
+
+
 void coreLoop(void)
 {
 	stimulusCompleted = FALSE;		// The stimulus has been completed 
@@ -49,7 +64,13 @@ void coreLoop(void)
 
 	do {// loop until stimulus is complete
 		// select and run a process
+		logGeneric("ONE ****************");
+		printList(readyList);
+		
 		currentProcess = schedule(readyList);
+		logPid(currentProcess, "PROCESS IS TAKEN OUT OF READYLIST TO RUN");
+		logGeneric("TWO ****************");
+		printList(readyList);
 		if (currentProcess != NO_PROCESS)		// schedulable process exists, given by its PID
 		{
 			systemTime = systemTime + SCHEDULING_DURATION;
@@ -58,8 +79,11 @@ void coreLoop(void)
 			// run the processin the simulation, get info what happens next
 			schedulingEvent = sim_runProcess(currentProcess, QUANTUM);
 			logPidEvent(currentProcess, schedulingEvent, "Process left CPU");
+			logPidCompleteness(currentProcess, processTable[currentProcess].usedCPU,
+				processTable[currentProcess].duration, "of the Process completed");
 			// handle all processes that turned "ready" in the meantime (unblocked or started (in case of multiprogramming) )
 			releaseEvent = sim_check4UnblockedOrNew(&readyProcess);
+			logPidEvent(readyProcess, releaseEvent, "Release Event ****************");
 			while (releaseEvent != none)
 			{
 				/* Without multiprogramming this loop shall never be entered, but: */

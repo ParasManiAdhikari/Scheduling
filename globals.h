@@ -13,7 +13,7 @@
 
 // if this directive is enabled, the simulation supports multiprogramming. 
 // Must be activated for any scheduler but the initial batch system.
-// #define SIM_MULTIPROGAMMING
+#define SIM_MULTIPROGAMMING
 
 // if this directive is enabled, the random number generator is seeded with zero
 #define NO_RANDOM_SEED
@@ -25,7 +25,7 @@
 #define NO_PROCESS 0
 
 // Maximum duration one process gets the CPU, zero indicates no preemption
-#define QUANTUM 0
+#define QUANTUM 50
 
 // name of the file with process definitions
 #define PROCESS_FILENAME "processes.txt"
