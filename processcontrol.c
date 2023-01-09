@@ -131,31 +131,32 @@ Boolean addBlocked(pid_t pid, unsigned blockDuration)
 }
 
 Boolean removeBlocked(pid_t pid)
+// remove a process from blocked list
 {
 	int count = 0;
 	blockedList_t toDelete = blockedList;
-	while (toDelete->next != NULL) {
+	while (toDelete->next != NULL) {		// find the process to delete
 		if (toDelete->pid == pid) {
 			break;
 		}
 		toDelete = toDelete->next;
-		count++;
+		count++;							// count index
 	}
 
-	 //if its tail
+	//if its tail
 	if (toDelete->next == NULL && count > 1) {
 		printList(blockedList);
-		toDelete->prev->next = NULL;
+		toDelete->prev->next = NULL;		//make previous element the tail
 	}
 	// if its head
 	else if (count == 0) {
-		blockedList = toDelete->next;
+		blockedList = toDelete->next;       // make list start from the next process
 	}
 	//between head and tail processses
 	else {
-		toDelete->prev->next = toDelete->next;
+		toDelete->prev->next = toDelete->next;		// link previous and next processes
 		toDelete->next->prev = toDelete->prev;
-		toDelete = NULL;
+		toDelete = NULL;							//delete
 	}
 	return TRUE;
 }
@@ -200,13 +201,12 @@ Boolean initReadyList(void)
 	return TRUE;
 }
 
-Boolean addReady(pid_t pid)	// add this process to the ready list
+Boolean addReady(pid_t pid)	
+// add a process to the ready list
 {
 	processTable[pid].status = ready;			// change process state to "ready"
 	if (readyList != NULL) {
-		// 1 +2
-		// 
-		//find the last added process (tail)
+												//find the last added process (tail)
 		readyList_t tail = readyList;
 		while (tail->next != NULL) {
 			tail = tail->next;
@@ -222,6 +222,7 @@ Boolean addReady(pid_t pid)	// add this process to the ready list
 		newBlock->prev = tail;
 	}
 	else {
+		// when list is empty
 		readyOne.pid = pid; 
 		readyList = &readyOne;
 	}
@@ -232,14 +233,13 @@ Boolean removeReady(pid_t pid)
 {
 	int count = 0;
 	readyList_t toDelete = readyList;
-	while (toDelete->next != NULL) {
+	while (toDelete->next != NULL) {		//find the process to delete
 		if (toDelete->pid == pid) {
 			break;
 		}
 		toDelete = toDelete->next;
-		count++;
+		count++;							//count the index of the process
 	}
-	// 1 2 3
 
 	//if its tail
 	if (toDelete->next == NULL && count > 1) {
@@ -249,11 +249,11 @@ Boolean removeReady(pid_t pid)
 	else if (count == 0) {
 		readyList = toDelete->next;
 	}
-	//between head and tail processses
+	//between head and tail
 	else {
-		toDelete->prev->next = toDelete->next;
+		toDelete->prev->next = toDelete->next;		// link previous process to next process
 		toDelete->next->prev = toDelete->prev;
-		toDelete = NULL;
+		toDelete = NULL;							// delete
 	}
 	return TRUE;
 }

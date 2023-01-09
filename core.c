@@ -86,10 +86,10 @@ void coreLoop(void)
 				/* This must be extended for multiprogramming. */
 				/* Add Code for handling of started or unblocked processes here.
 				/* For RR it is simply enqueing to the readylist, other schedulers may require more actions */
-				logPidEvent(readyProcess, releaseEvent, "");
-				addReady(readyProcess);
+				logPidEvent(readyProcess, releaseEvent, "");		// log release event
+				addReady(readyProcess);								// add to readyList
 				addReadyMessage(readyProcess);
-				if (releaseEvent == unblocked) {
+				if (releaseEvent == unblocked) {					// unblock
 					removeBlocked(readyProcess);
 					removeBlockedMessage(readyProcess);
 				}
@@ -142,10 +142,9 @@ void coreLoop(void)
 				removeBlockedMessage(readyProcess);
 				removeBlocked(readyProcess); // remove from blocked pool
 				processTable[readyProcess].status = ready;   // change status from "blocked" to "ready"
-				addReadyMessage(readyProcess);
-				addReady(readyProcess);		// add this process to the ready list
+				addReadyMessage(readyProcess);				//log
+				addReady(readyProcess);						// add this process to the ready list
 				logPid(readyProcess, "IO completed, process unblocked and switched to ready state");
-
 				break;
 			case started:
 				processTable[readyProcess].status = ready;   // change status from "init" to "ready"
