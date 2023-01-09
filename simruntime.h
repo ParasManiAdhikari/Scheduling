@@ -71,7 +71,7 @@ schedulingEvent_t sim_check4UnblockedOrNew(pid_t* pPID);
 /* process has left the CPU and	thus the system time was advanced.	*/
 
 
-
+schedulingEvent_t sim_check4UnblockedOrNew(pid_t* pPID);
 
 
 

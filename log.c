@@ -37,30 +37,6 @@ void logPidEvent(unsigned pid, schedulingEvent_t reason, char* message)
 		pid, eventString[reason], message);
 }
 
-void logPidAddReady(unsigned pid) {
-	//printf("----------------------------------------------------\n");
-	printf("%6u : PID %3u : add to readylist\n", systemTime, pid);
-	//printf("----------------------------------------------------\n");
-}
-
-void logPidRemoveReady(unsigned pid) {
-	//printf("----------------------------------------------------\n");
-	printf("%6u : PID %3u : Removed from readylist \n", systemTime, pid);
-	//printf("----------------------------------------------------\n");
-}
-
-void logPidAddBlocked(unsigned pid, schedulingEvent_t reason) {
-	//printf("----------------------------------------------------\n");
-	printf("%6u : PID %3u : add to blockedlist : Event: %s \n", systemTime, pid, eventString[reason]);
-	//printf("----------------------------------------------------\n");
-}
-
-void logPidRemoveBlocked(unsigned pid) {
-	//printf("----------------------------------------------------\n");
-	printf("%6u : PID %3u : Removed from blockedlist \n", systemTime, pid);
-	//printf("----------------------------------------------------\n");
-}
-
 void logPidCompleteness(unsigned pid, unsigned done, unsigned length,
 	char* message)
 {
@@ -68,6 +44,26 @@ void logPidCompleteness(unsigned pid, unsigned done, unsigned length,
 		pid, done, length, message);
 }
 
+
+void addReadyMessage(unsigned pid)
+{
+	printf("%6u : PID %3u : Added to the ready list\n", systemTime, pid);
+}
+
+void RemoveReadyMessage(unsigned pid)
+{
+	printf("%6u : PID %3u : Removed from the ready list\n", systemTime, pid);
+}
+
+void addBlockedMessage(unsigned pid, schedulingEvent_t reason)
+{
+	printf("%6u : PID %3u : Added to the blocked list : Event: %s\n", systemTime, pid, eventString[reason]);
+}
+
+void removeBlockedMessage(unsigned pid)
+{
+	printf("%6u : PID %3u : Removed from blocked list\n", systemTime, pid);
+}
 
 /* ----------------------------------------------------------------- */
 /*                       Local helper functions                      */

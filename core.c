@@ -39,17 +39,19 @@ void initOS(void)
 }
 
 void printList(blockedList_t list) {
+	logGeneric("READYLIST");
 	blockedList_t process = list;
 	if (process == NULL) {
-		return 0;
+		logGeneric("EMPTY ---");
+		return;
 	}
-	printf("-----------\n");
+	printf("         -----------\n");
 	while (process->next != NULL) {
-		printf("process id: %d\n", process->pid);
+		printf("       : Process : %d\n", process->pid);
 		process = process->next;
 	}
-	printf("process id: %d\n", process->pid);
-	printf("------------\n");
+	printf("       : Process : %d\n", process->pid);
+	printf("         -----------\n");
 }
 
 
@@ -64,13 +66,8 @@ void coreLoop(void)
 
 	do {// loop until stimulus is complete
 		// select and run a process
-		logGeneric("ONE ****************");
 		printList(readyList);
-		
 		currentProcess = schedule(readyList);
-		logPid(currentProcess, "PROCESS IS TAKEN OUT OF READYLIST TO RUN");
-		logGeneric("TWO ****************");
-		printList(readyList);
 		if (currentProcess != NO_PROCESS)		// schedulable process exists, given by its PID
 		{
 			systemTime = systemTime + SCHEDULING_DURATION;
@@ -83,21 +80,22 @@ void coreLoop(void)
 				processTable[currentProcess].duration, "of the Process completed");
 			// handle all processes that turned "ready" in the meantime (unblocked or started (in case of multiprogramming) )
 			releaseEvent = sim_check4UnblockedOrNew(&readyProcess);
-			logPidEvent(readyProcess, releaseEvent, "Release Event ****************");
 			while (releaseEvent != none)
 			{
 				/* Without multiprogramming this loop shall never be entered, but: */
 				/* This must be extended for multiprogramming. */
 				/* Add Code for handling of started or unblocked processes here.
 				/* For RR it is simply enqueing to the readylist, other schedulers may require more actions */
-
-
-				addReady(readyProcess);		// add this process to the ready list
-				logPidAddReady(readyProcess);
-				if (releaseEvent == unblocked) {
+				logPidEvent(readyProcess, releaseEvent, "");		// log release event
+				logPidEvent(readyProcess, schedulingEvent, "Ready process status");
+				addReady(readyProcess);								// add to readyList
+				addReadyMessage(readyProcess);
+				
+				if (releaseEvent == unblocked) {					// unblock
 					removeBlocked(readyProcess);
-					logPidRemoveBlocked(readyProcess);
+					removeBlockedMessage(readyProcess);
 				}
+
 				/* Last command in the while loop is the following (must alway remain the last command in the loop) */
 				releaseEvent = sim_check4UnblockedOrNew(&readyProcess);	// check for further events, must stay in!
 			}
@@ -111,14 +109,14 @@ void coreLoop(void)
 				currentProcess = NO_PROCESS;
 				break;
 			case io:	// block process for time of IO
-				logPidAddBlocked(currentProcess, schedulingEvent);
+				addBlockedMessage(currentProcess, schedulingEvent);
 				addBlocked(currentProcess, sim_setIOBlockTime());
 				break;
 			case quantumOver: // only logging needed
 				logPidCompleteness(currentProcess, processTable[currentProcess].usedCPU,
 					processTable[currentProcess].duration, "of the Process completed");
 				processTable[currentProcess].status = ready;	// update status
-				logPidAddReady(currentProcess);
+				addReadyMessage(currentProcess);
 				// add this process to the ready list
 				addReady(currentProcess);
 				break;
@@ -143,17 +141,16 @@ void coreLoop(void)
 				stimulusCompleted = TRUE;
 				break;
 			case unblocked:
-				logPidRemoveBlocked(readyProcess);
+				removeBlockedMessage(readyProcess);
 				removeBlocked(readyProcess); // remove from blocked pool
 				processTable[readyProcess].status = ready;   // change status from "blocked" to "ready"
-				logPidAddReady(readyProcess);
-				addReady(readyProcess);		// add this process to the ready list
+				addReadyMessage(readyProcess);				//log
+				addReady(readyProcess);						// add this process to the ready list
 				logPid(readyProcess, "IO completed, process unblocked and switched to ready state");
-
 				break;
 			case started:
 				processTable[readyProcess].status = ready;   // change status from "init" to "ready"
-				logPidAddReady(readyProcess);
+				addReadyMessage(readyProcess);
 				addReady(readyProcess);		// add this process to the ready list
 				logPid(readyProcess, "New process initialised and now ready");
 				break;

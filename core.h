@@ -15,6 +15,5 @@ void initOS(void);
 void coreLoop(void);
 /* the core scheduling loop of the OS								*/
 /* +++ this must be extended for multiprogramming					*/
-
-
+void printList(blockedList_t list);
 #endif /* __CORE__ */
