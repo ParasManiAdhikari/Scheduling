@@ -87,8 +87,10 @@ void coreLoop(void)
 				/* Add Code for handling of started or unblocked processes here.
 				/* For RR it is simply enqueing to the readylist, other schedulers may require more actions */
 				logPidEvent(readyProcess, releaseEvent, "");		// log release event
+				logPidEvent(readyProcess, schedulingEvent, "Ready process status");
 				addReady(readyProcess);								// add to readyList
 				addReadyMessage(readyProcess);
+				
 				if (releaseEvent == unblocked) {					// unblock
 					removeBlocked(readyProcess);
 					removeBlockedMessage(readyProcess);

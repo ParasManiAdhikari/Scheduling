@@ -10,17 +10,6 @@
 /* Declare global variables according to definition in globals.h	*/
 unsigned systemTime = 0; 	// the current system time (up time)
 
-//void printList(blockedList_t list) {
-//	blockedList_t process = list;
-//	printf("-----------\n");
-//	while (process->next != NULL) {
-//		printf("process id: %d\n", process->pid);
-//		process = process->next;
-//	}
-//	printf("process id: %d\n", process->pid);
-//	printf("------------\n");
-//}
-
 void testBlockAddRemove() {
 	addBlocked(1, 5);
 	addBlocked(2, 10);
@@ -54,8 +43,8 @@ int main(int argc, char *argv[])
 	logGeneric("Simulation complete, shutting down");
 	sim_closeSim();		// shut down simulation envoronment
 	fflush(stdout);			// make sure the output on the console is complete 
-	/*testBlockAddRemove();
-	testReadyAddRemove();*/
+	//testBlockAddRemove();
+	//testReadyAddRemove();
 	system("pause");
 	return 1; 
 }

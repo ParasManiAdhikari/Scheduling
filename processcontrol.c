@@ -103,29 +103,28 @@ Boolean addBlocked(pid_t pid, unsigned blockDuration)
 // if list not empty, find the tail and add next to it
 {
 	processTable[pid].status = blocked;			// change process state to "blocked"
-	if (blockedList != NULL) {
-		// 1 +2
-		// 
-		//find the last added process (tail)
-		blockedList_t tail = blockedList;
-		while (tail->next != NULL) {
-			tail = tail->next;
-		}
-
-		//create a block which holds this process
-		blockedList_t newBlock = malloc(sizeof(blockedList_t));
+	blockedList_t newBlock = malloc(sizeof(blockedList_t));
+	
+	if (newBlock != NULL) {
 		newBlock->pid = pid;
 		newBlock->IOready = systemTime + blockDuration;
 		newBlock->next = NULL;
+	}
+	if (blockedList == NULL || blockedList->IOready >= newBlock->IOready) {
+		blockedList = newBlock;
+	}
+	else {
+		//create a block which holds this process
+		
+		//find the last added process (tail)
+		blockedList_t tail = blockedList;
+		while (tail->next != NULL && tail->next->IOready < newBlock->IOready) {
+			tail = tail->next;
+		}
 
 		// link tail and newBlock
 		tail->next = newBlock;
 		newBlock->prev = tail;
-	}
-	else {
-		blockedOne.IOready = systemTime + blockDuration; // this must be supported by an extended implementation!
-		blockedOne.pid = pid;
-		blockedList = &blockedOne;			// remember the blocked process
 	}
 	return TRUE;
 }
@@ -205,6 +204,11 @@ Boolean addReady(pid_t pid)
 // add a process to the ready list
 {
 	processTable[pid].status = ready;			// change process state to "ready"
+	readyList_t newBlock = malloc(sizeof(readyList_t));
+	if (newBlock != NULL) {
+		newBlock->pid = pid;
+		newBlock->next = NULL;
+	}
 	if (readyList != NULL) {
 												//find the last added process (tail)
 		readyList_t tail = readyList;
@@ -212,19 +216,13 @@ Boolean addReady(pid_t pid)
 			tail = tail->next;
 		}
 
-		//create a block which holds this process
-		readyList_t newBlock = malloc(sizeof(readyList_t));
-		newBlock->pid = pid;
-		newBlock->next = NULL;
-
 		// link tail and newBlock
 		tail->next = newBlock;
 		newBlock->prev = tail;
 	}
 	else {
 		// when list is empty
-		readyOne.pid = pid; 
-		readyList = &readyOne;
+		readyList = newBlock;
 	}
 	return TRUE;
 }
@@ -273,7 +271,7 @@ readyListElement_t* headOfReadyList()
 /*		- no process is added as "ready" before its start time has elapsed	*/
 {
 	if (!isReadyListEmpty()) {
-		return readyList;	// return pointer to the only ready element remembered
+		return readyList;	// return pointer to the first element
 	}
 	else return NULL;		// empty ready list has no first element
 }
